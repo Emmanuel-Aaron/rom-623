@@ -15,17 +15,18 @@ struct Orientation {
     double pitch, roll;
 };
 
-void activateBMP6500() {
+//0x3B, false, 14, true
+void activateBMP6500(int start_addr, bool stop, int reg_count, bool cycle) {
     Wire.beginTransmission(MPU); //begin transmission to I2C slave device
 
     //Format of output
-    Wire.write(0x3B); // starting with register 0x3B (ACCEL_XOUT_H)
+    Wire.write(start_addr); // starting with register 0x3B (ACCEL_XOUT_H)
 
     //Stop sending data for setup
-    Wire.endTransmission(false); //restarts transmission to I2C slave device
+    Wire.endTransmission(stop); //restarts transmission to I2C slave device
 
     //Tell BMP to send data and stop after one cycle
-    Wire.requestFrom(MPU,14,true); //request 14 registers in total  
+    Wire.requestFrom(MPU,reg_count,cycle); //request 14 registers in total  
 }
 
 int readTemp() {
@@ -48,12 +49,24 @@ struct Vec3 readAccel() {
 }
 
 struct Vec3 readGyro() {
-    struct Vec3 gyro;
+//0x3B, false, 14, true
+    int x, y, z;
+    x = y = z = 0;
 
-    //read gyroscope data
-    gyro.x = Wire.read()<<8|Wire.read() + 480; // 0x43 (GYRO_XOUT_H) 0x44 (GYRO_XOUT_L)
-    gyro.y = Wire.read()<<8|Wire.read() + 170; // 0x45 (GYRO_YOUT_H) 0x46 (GYRO_YOUT_L)
-    gyro.z = Wire.read()<<8|Wire.read() + 210; // 0x47 (GYRO_ZOUT_H) 0x48 (GYRO_ZOUT_L) 
+    int counter = 0;
+    while(counter < 100) {
+        activateBMP6500(0x43, false, 6, true);
+        //read gyroscope data
+        x += Wire.read()<<8|Wire.read() + 480; // 0x43 (GYRO_XOUT_H) 0x44 (GYRO_XOUT_L)
+        y += Wire.read()<<8|Wire.read() + 170; // 0x45 (GYRO_YOUT_H) 0x46 (GYRO_YOUT_L)
+        z += Wire.read()<<8|Wire.read() + 210; // 0x47 (GYRO_ZOUT_H) 0x48 (GYRO_ZOUT_L) 
+        counter += 1;
+    }
+
+    struct Vec3 gyro;
+    gyro.x = x/100;
+    gyro.y = y/100;
+    gyro.z = z/100;
 
     return gyro;
 }
@@ -72,16 +85,16 @@ void setup()
 void loop()
 {
 
-    activateBMP6500();
+    //activateBMP6500(0x3B, false, 14, true);
 
-    struct Vec3 accel = readAccel();
-    AcX = accel.x;
-    AcY = accel.y;
-    AcZ = accel.z;
-  
-    //Celcius
-    Tmp = readTemp(); // 0x41 (TEMP_OUT_H) 0x42 (TEMP_OUT_L) 
-  
+//   struct Vec3 accel = readAccel();
+//   AcX = accel.x;
+//   AcY = accel.y;
+//   AcZ = accel.z;
+// 
+//   //Celcius
+//   Tmp = readTemp(); // 0x41 (TEMP_OUT_H) 0x42 (TEMP_OUT_L) 
+// 
     struct Vec3 gyro = readGyro();
     GyX = gyro.x; // 0x43 (GYRO_XOUT_H) 0x44 (GYRO_XOUT_L)
     GyY = gyro.y; // 0x45 (GYRO_YOUT_H) 0x46 (GYRO_YOUT_L)
@@ -89,26 +102,26 @@ void loop()
 
 
     //get pitch/roll
-    struct Orientation orient = getAngle(AcX,AcY,AcZ);
+    struct Orientation orient = getAngle(GyX,GyY,GyZ);
   
     //printing values to serial port
-    Serial.print("Angle: ");
-    Serial.print("Pitch = "); Serial.print(orient.pitch);
-    Serial.print(" Roll = "); Serial.println(orient.roll);
+//   Serial.print("Angle: ");
+   Serial.print("Pitch = "); Serial.print(orient.pitch);
+   Serial.print(" Roll = "); Serial.println(orient.roll);
   
-    Serial.print("Accelerometer: ");
-    Serial.print("X = "); Serial.print(AcX);
-    Serial.print(" Y = "); Serial.print(AcY);
-    Serial.print(" Z = "); Serial.println(AcZ); 
-
-    Serial.print("Temperature in celsius = "); Serial.print(t);  
+//   Serial.print("Accelerometer: ");
+//   Serial.print("X = "); Serial.print(AcX);
+//   Serial.print(" Y = "); Serial.print(AcY);
+//   Serial.print(" Z = "); Serial.println(AcZ); 
+//
+//   Serial.print("Temperature in celsius = "); Serial.print(t);  
+// 
+//   Serial.print("Gyroscope: ");
+// Serial.print("X = "); Serial.print(GyX);
+// Serial.print(" Y = "); Serial.print(GyY);
+// Serial.print(" Z = "); Serial.println(GyZ);
   
-    Serial.print("Gyroscope: ");
-    Serial.print("X = "); Serial.print(GyX);
-    Serial.print(" Y = "); Serial.print(GyY);
-    Serial.print(" Z = "); Serial.println(GyZ);
-  
-    delay(1000);
+    delay(100);
 }
 
 //function to convert accelerometer values into pitch and roll
