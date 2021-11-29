@@ -1,20 +1,47 @@
 #include <stdio.h>
 //#include "../header/scheduler.h"
-#include "../src/job.c"
+//#include "job.c"
+#include "instructions.c"
+//#include "algorithm.c"
 
 #define MAX_SIZE 20
 #define MAX_TASKS 10
-struct Job schedule[MAX_SIZE];
+#define MAX_QUE 5
 
-int task_index = 0;
-struct Job tasks[MAX_TASKS];
+struct Job* schedule[MAX_SIZE]; //List of jobs. EG. One hyperperiod
+struct Job tasks[MAX_TASKS]; //List of tasks
+struct Job que[MAX_QUE];
 
+int task_index = 0; //Index for adding tasks
+int job_index = 0;
+
+
+void zeroQue() {
+    int i = 0;
+    while(i < MAX_QUE) {
+        que[i] = (struct Job){0};
+        i += 1;
+    }
+}
 void zeroTasks() {
     int i = 0;
     while(i < MAX_TASKS) {
         tasks[i] = (struct Job){0};
         i += 1;
     }
+}
+void zeroJobs() {
+    int i = 0;
+    while(i < MAX_SIZE) {
+        schedule[i] = (struct Job*)0;
+        i += 1;
+    }
+}
+
+void zero() {
+    zeroJobs();
+    zeroTasks();
+    zeroQue();
 }
 
 int findTask(uint8_t id) {
@@ -31,13 +58,15 @@ int findTask(uint8_t id) {
 }
 
 int addTask(const struct Job job) {
-    if(task_index == MAX_SIZE) {
-        return -1;
+    int i = 0;
+    while (i < MAX_TASKS) {
+        if(tasks[i].ID == 0) {
+            tasks[i] = job;
+            return i;
+        }
+        i += 1;
     }
-
-    tasks[task_index] = job;
-    task_index += 1;
-    return 1;
+    return -1;
 
 }
 
@@ -89,6 +118,17 @@ int schedulerFeasibilty() {
     }
 
     //check other cases
+}
+
+//Reschedule all the jobs
+void runNext() {
+    if(schedule[job_index] == 0) {
+    }
+    else {
+    void (*func_ptr)(void) = getInstructions(*schedule[job_index]);
+    func_ptr();
+    }
+    job_index = (job_index + 1)%MAX_SIZE;
 }
 
 void printTask(const struct Job task) {

@@ -15,7 +15,7 @@ void removeTask(uint8_t id);
 
 int schedulerFeasibilty();
 
-void initScheduler();
+void fullSchedule();
 
 void haltScheduler();
 //End of Scheduler API
@@ -23,9 +23,10 @@ void haltScheduler();
 //Internals
 ////Runtime Scheduling
 void scheduleNext();
-int findAvailableTime(const struct Job job);
+int findAvailableTime(struct Job* job_ptr);
 
-int isHard(const struct Job job);
+int isHard(struct Job* job_ptr);
+void setInterupt(int milliseconds);
 ////End of Runtime Scheduling
 
 
