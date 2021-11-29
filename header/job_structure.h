@@ -42,11 +42,11 @@ struct Mash {
 };
 
 //Preforms required conversions and calculations to create time info
-struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, size_t deadl, uint8_t deadl_t, size_t release);
+const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, size_t deadl, uint8_t deadl_t, size_t release);
 
 //Preforms required conversions and calculations to create exec 
 //constraints
-struct ExecConstraints createExCons(void* d_jobs, void* res, uint8_t interupt, uint8_t instr);
+const struct ExecConstraints createExCons(void* d_jobs, void* res, uint8_t interupt, uint8_t instr);
 
-struct Job createJob(struct ExecConstraints ex_con, struct TimeInfo t_info, uint8_t id);
+const struct Job createJob(struct ExecConstraints ex_con, struct TimeInfo t_info, uint8_t id);
 

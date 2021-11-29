@@ -1,22 +1,19 @@
-struct Task {
-};
+#include "./job_structure.h"
 
-struct HyperPeriod {
-    struct HyperPeriod* next;
-    struct HyperPeriod* prev;
+#define MAX_SIZE 20
+#define MAX_TASKS 10
+struct Job schedule[MAX_SIZE];
 
-    struct Task job;
-
-};
-
-struct HyperPeriod* schedule;
+int task_index = 0;
+struct Job tasks[MAX_TASKS];
 
 //Scheduler API
-void addTask(struct Task task);
+    //Returns the success of adding a task, -1 FAIL, else PASS
+int addTask(const struct Job job);
 
-void removeTask(int id);
+void removeTask(uint8_t id);
 
-bool schedulerFeasibilty();
+int schedulerFeasibilty();
 
 void initScheduler();
 
@@ -25,9 +22,10 @@ void haltScheduler();
 
 //Internals
 ////Runtime Scheduling
-void schedule();
+void scheduleNext();
+int findAvailableTime(const struct Job job);
 
-bool isHard(struct Task job);
+int isHard(const struct Job job);
 ////End of Runtime Scheduling
 
 

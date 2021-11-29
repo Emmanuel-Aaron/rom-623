@@ -1,4 +1,4 @@
-#include "./job_strcuture.h"
+#include "./job_structure.h"
 #include <stdio.h>
 
 void printJob(struct Job job) {
