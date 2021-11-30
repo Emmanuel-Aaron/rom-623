@@ -48,7 +48,6 @@ void periodSFull(){
 
     while (i < MAX_TASKS){
         if(tasks[i].ID == 0){
-            continue;
         }
         else{
             for(int cp = 0; cp < MAX_TASKS; cp++){
@@ -68,7 +67,7 @@ void periodSFull(){
                 }
             }
             schedule[i] = &Holder[i];
-	    i++;
+        i++;
         }
     }
 }
