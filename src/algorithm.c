@@ -16,21 +16,6 @@ void scheduleNext() {
 int findAvailableTime(struct Job* job_ptr) {
 }
 
-
-
-void fcfcFull() {
-    int i = 0;
-    while (i < MAX_TASKS) {
-        if(tasks[i].ID == 0) {
-        }
-        else {
-            schedule[i] = &tasks[i];
-        }
-
-        i += 1;
-    }
-}
-
 int addQue() {
     int i = 0;
     while (i < MAX_QUE) {
@@ -45,6 +30,19 @@ int addQue() {
         i += 1;
     }
     return 1;
+}
+
+void fcfcFull() {
+    int i = 0;
+    while (i < MAX_TASKS) {
+        if(tasks[i].ID == 0) {
+        }
+        else {
+            schedule[i] = &tasks[i];
+        }
+
+        i += 1;
+    }
 }
 
 void fcfcNext() {
