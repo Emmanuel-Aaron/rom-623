@@ -1,12 +1,14 @@
 #include "/root/Development/rom-623/src/algorithm.c"
 void printer1() {
     digitalWrite(11, HIGH);
-    Serial.print("Im Job 1\n");
+    delay(100);
+    digitalWrite(11, LOW);
 }
 
 void printer2() {
-    digitalWrite(11, LOW);
-    Serial.print("Im Job 2\n");
+    digitalWrite(10, HIGH);
+    delay(100);
+    digitalWrite(10, LOW);
 }
 
 void setup() {
