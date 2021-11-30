@@ -47,11 +47,13 @@ int main() {
 
     //Making a full jobs schedule from tasks
     fullSchedule();
-    printf("Scheduled\n");
+    printf("Scheduled1\n");
+    printJobs();
 
     //Loop runnin jobs with the selected algorithms
     while (1) {
-        scheduleNext();
+        printf("loop\n");
+        //scheduleNext();
         runNext();
     }
 }
