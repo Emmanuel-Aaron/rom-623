@@ -5,6 +5,14 @@
 void (*algorithm_full)(void); //The schedulers algorithm
 void (*algorithm_next)(void); //The schedulers algorithm
 
+void printJobs() {
+    int i = 0;
+    while(i < MAX_SIZE) {
+        printf("Period: %ld\n", schedule[i]->t_info.period);
+        i += 1;
+    }
+}
+
 void fullSchedule() {
     algorithm_full();
 }

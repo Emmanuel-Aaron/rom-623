@@ -111,7 +111,6 @@ int schedulerFeasibilty() {
 
     if(cpu_util >= 1) {
         printf("CPU_UTIL: %f\n", cpu_util);
-        perror("ERROR: cpu_util is > 1");
         return -1;
     } else {
         return 1;
