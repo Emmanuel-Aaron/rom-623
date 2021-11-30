@@ -2,7 +2,7 @@
 
 void printer1() {
     printf("Im Job 1\n");
-}
+
 
 void printer2() {
     printf("Im Job 2\n");
@@ -40,8 +40,8 @@ int main() {
     printf("Is feasible: %d\n", schedulerFeasibilty());
 
     //setting the desired algorithms
-    algorithm_full = fcfcFull;
-    algorithm_next = fcfcNext;
+    algorithm_full = periodSFull;
+    algorithm_next = periodSFull;
     //contextSwitches = false;
 
     //Making a full jobs schedule from tasks
