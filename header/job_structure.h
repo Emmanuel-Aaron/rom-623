@@ -10,6 +10,7 @@ struct TimeInfo {
     size_t period; //Milliseconds
 
     size_t deadline; //Relative Milliseconds
+    uint8_t deadline_type; //0-4
 };
 
 struct ExecConstraints {
