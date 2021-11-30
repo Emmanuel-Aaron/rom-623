@@ -41,42 +41,35 @@ int addQue() {
 }
 
 void periodSFull(){
-	int i = 0;
+    int i = 0;
 
-	struct Job hold;
-	struct Job Holder[MAX_TASKS];
+    struct Job hold;
+    struct Job Holder[MAX_TASKS];
 
-	while (i < MAX_TASKS){
-		if(tasks[i].ID == 0){
-			continue;
-		}
-		else{
+    while (i < MAX_TASKS){
+        if(tasks[i].ID == 0){
+            continue;
+        }
+        else{
+            for(int cp = 0; cp < MAX_TASKS; cp++){
+                Holder[cp] = tasks[cp];
+            }
 
-			for(int cp = 0; cp < MAX_TASKS; cp++){
-				Holder[cp] = tasks[cp];
-			}
-
-
-			for(int k = 0; k < MAX_TASKS; k++){
-				for(int n = 0; n < MAX_TASKS; n++){
-
-					if(Holder[k].t_info.period > Holder[n].t_info.period){
-
-						continue;
-					}
-					else{
-						hold = Holder[k];
-						Holder[k] = Holder[n];
-						Holder[n] = hold;
-					}
-				}
-
-			}
-
-			schedule[i] = &Holder[i];
-		}
-
-	}
+            for(int k = 0; k < MAX_TASKS; k++){
+                for(int n = 0; n < MAX_TASKS; n++){
+                    if(Holder[k].t_info.period > Holder[n].t_info.period){
+                        continue;
+                    }
+                    else{
+                        hold = Holder[k];
+                        Holder[k] = Holder[n];
+                        Holder[n] = hold;
+                    }
+                }
+            }
+            schedule[i] = &Holder[i];
+        }
+    }
 }
 
 

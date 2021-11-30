@@ -2,6 +2,7 @@
 
 void printer1() {
     printf("Im Job 1\n");
+}
 
 
 void printer2() {
