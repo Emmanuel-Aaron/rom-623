@@ -68,6 +68,7 @@ void periodSFull(){
                 }
             }
             schedule[i] = &Holder[i];
+	    i++;
         }
     }
 }
