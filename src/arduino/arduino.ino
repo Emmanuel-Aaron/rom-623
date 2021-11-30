@@ -1,13 +1,13 @@
 #include "/root/Development/rom-623/src/algorithm.c"
 void printer1() {
     digitalWrite(11, HIGH);
-    delay(100);
+    delay(1000);
     digitalWrite(11, LOW);
 }
 
 void printer2() {
     digitalWrite(10, HIGH);
-    delay(100);
+    delay(1000);
     digitalWrite(10, LOW);
 }
 
