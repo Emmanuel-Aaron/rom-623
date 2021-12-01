@@ -71,6 +71,7 @@ int addQue() {
     return 1;
 }
 
+//Must account for release time!!!!!!!!!
 //Emanuels algorithem
 void edfFull() {
     struct Job* ptr_list[MAX_TASKS];
