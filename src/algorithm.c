@@ -1,6 +1,7 @@
 //time = millis();
 //#include "./job.c"
 #include "./scheduler.c"
+#include "./arduino/interupt/interupt.h"
 
 void (*algorithm_full)(void); //The schedulers algorithm
 void (*algorithm_next)(void); //The schedulers algorithm
@@ -48,7 +49,23 @@ void fullSchedule() {
     algorithm_full();
 }
 
-void scheduleNext() {
+//sets the next hard deadline
+void setNextHardD() {
+    int i = job_index;
+    while(i < (i + MAX_SIZE)) {
+        if(schedule[i%MAX_SIZE] == 0) {}
+        else if(schedule[i%MAX_SIZE]->t_info.deadline_type == 1) {
+            setIntTimer(2);
+            instr = instructions[schedule[i%MAX_SIZE]->ex_con.instructions];
+        }
+    }
+}
+
+void scheduleNext(int hard) {
+    if(hard != 0) {
+        //Set the next interupt
+        //setNextHardD();
+    }
     algorithm_next();
 }
 

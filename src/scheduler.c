@@ -7,10 +7,12 @@
 #define MAX_SIZE 20
 #define MAX_TASKS 10
 #define MAX_QUE 5
+#define MAX_INSTRUCTIONS 10
 
 struct Job* schedule[MAX_SIZE]; //List of jobs. EG. One hyperperiod
 struct Job tasks[MAX_TASKS]; //List of tasks
 struct Job que[MAX_QUE];
+void* instruction_array[MAX_INSTRUCTIONS];
 
 int task_index = 0; //Index for adding tasks
 int job_index = 0;

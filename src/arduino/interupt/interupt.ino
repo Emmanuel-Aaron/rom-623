@@ -3,9 +3,9 @@
 int data = 5;
 
 bool on = false;
-void func1(void* data) {
+void func1() {
 digitalWrite(11, HIGH);
-delay(1000);
+delay(1500);
 digitalWrite(11, LOW);
 }
 
@@ -21,21 +21,10 @@ delay(100);
 digitalWrite(9, LOW);
 }
 
-
 void setup() {
-    Serial.begin(9600);
-    int i = 0;
-    Interupt nothing;
-    nothing.ready = false;
-    while(i < 15) {
-        interupt_que[i] = nothing;
-        i += 1;
-    }
-        addJob2Que(func1, &data, 1);
-        setIntTimer(1);
+instr = func1;
+setIntTimer(2000);
 }
 
-bool isRun = false;
 void loop() {
-
 }
