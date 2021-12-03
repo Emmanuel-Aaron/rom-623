@@ -1,143 +1,104 @@
-#include <Wire.h> //library allows communication with I2C / TWI devices
-#include <math.h> //library includes mathematical functions
+#include <Wire.h>
 
-const int MPU=0x68; //I2C address of the MPU-6050
-int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ; //16-bit integers
-int AcXcal,AcYcal,AcZcal,GyXcal,GyYcal,GyZcal,tcal; //calibration variables
-double t,tx,tf,pitch,roll;
-
+double error_pitch;
+double error_roll;
 
 struct Vec3 {
-    int x, y, z;
+    double x;
+    double y;
+    double z;
 };
 
 struct Orientation {
-    double pitch, roll;
+    double pitch;
+    double roll;
 };
 
-//0x3B, false, 14, true
-void activateBMP6500(int start_addr, bool stop, int reg_count, bool cycle) {
-    Wire.beginTransmission(MPU); //begin transmission to I2C slave device
 
-    //Format of output
-    Wire.write(start_addr); // starting with register 0x3B (ACCEL_XOUT_H)
+struct Orientation current_ort;
 
-    //Stop sending data for setup
-    Wire.endTransmission(stop); //restarts transmission to I2C slave device
 
-    //Tell BMP to send data and stop after one cycle
-    Wire.requestFrom(MPU,reg_count,cycle); //request 14 registers in total  
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  setupMPU();
 }
 
-int readTemp() {
-    Tmp = Wire.read()<<8|Wire.read(); // 0x41 (TEMP_OUT_H) 0x42 (TEMP_OUT_L) 
-    tx = Tmp - 1600;
-    t = tx/340 + 36.53; //equation for temperature in degrees C from datasheet
-
-    return t;
+void loop() {
+  struct Orientation ort = requestOrientation();
+  updateOrientation(ort);
+  printCurrentOrt();
+  delay(100);
 }
 
-struct Vec3 readAccel() {
+void setupMPU(){
+  Wire.beginTransmission(0b1101000); //This is the I2C address of the MPU (b1101000/b1101001 for AC0 low/high datasheet sec. 9.2)
+  Wire.write(0x6B); //Accessing the register 6B - Power Management (Sec. 4.28)
+  Wire.write(0b00000000); //Setting SLEEP register to 0. (Required; see Note on p. 9)
+  Wire.endTransmission();
+  Wire.beginTransmission(0b1101000); //I2C address of the MPU
+  Wire.write(0x1B); //Accessing the register 1B - Gyroscope Configuration (Sec. 4.4)
+  Wire.write(0x00000000); //Setting the gyro to full scale +/- 250deg./s 
+  Wire.endTransmission(); 
+  Wire.beginTransmission(0b1101000); //I2C address of the MPU
+  Wire.write(0x1C); //Accessing the register 1C - Acccelerometer Configuration (Sec. 4.5)
+  Wire.write(0b00000000); //Setting the accel to +/- 2g
+  Wire.endTransmission();
+}
+
+struct Orientation requestOrientation() {
+    struct Vec3 g_force = recordAccelRegisters();
+
+    struct Orientation ort;
+    ort.roll = atan(g_force.y / sqrt(pow(g_force.x, 2) + pow(g_force.z, 2))) * 180/PI;
+    ort.pitch = atan(-1 * g_force.x / sqrt(pow(g_force.y, 2) + pow(g_force.z, 2))) * 180/PI;
+
+    return ort;
+}
+
+struct Vec3 recordAccelRegisters() {
     struct Vec3 accel;
 
-    //read accelerometer data
-    accel.x = Wire.read()<<8|Wire.read() - 950; // 0x3B (ACCEL_XOUT_H) 0x3C (ACCEL_XOUT_L)  
-    accel.y =Wire.read()<<8|Wire.read() - 300; // 0x3D (ACCEL_YOUT_H) 0x3E (ACCEL_YOUT_L) 
-    accel.z =Wire.read()<<8|Wire.read() - 0; // 0x3F (ACCEL_ZOUT_H) 0x40 (ACCEL_ZOUT_L)
+  Wire.beginTransmission(0b1101000); //I2C address of the MPU
+  Wire.write(0x3B); //Starting register for Accel Readings
+  Wire.endTransmission();
+  Wire.requestFrom(0b1101000,6); //Request Accel Registers (3B - 40)
 
-    return accel;
+  while(Wire.available() < 6);
+  accel.x = Wire.read()<<8|Wire.read(); //Store first two bytes into accelX
+  accel.y = Wire.read()<<8|Wire.read(); //Store middle two bytes into accelY
+  accel.z = Wire.read()<<8|Wire.read(); //Store last two bytes into accelZ
+  return processAccelData(accel);
 }
 
-struct Vec3 readGyro() {
-//0x3B, false, 14, true
-    int x, y, z;
-    x = y = z = 0;
-
-    int counter = 0;
-    while(counter < 100) {
-        activateBMP6500(0x43, false, 6, true);
-        //read gyroscope data
-        x += Wire.read()<<8|Wire.read() + 480; // 0x43 (GYRO_XOUT_H) 0x44 (GYRO_XOUT_L)
-        y += Wire.read()<<8|Wire.read() + 170; // 0x45 (GYRO_YOUT_H) 0x46 (GYRO_YOUT_L)
-        z += Wire.read()<<8|Wire.read() + 210; // 0x47 (GYRO_ZOUT_H) 0x48 (GYRO_ZOUT_L) 
-        counter += 1;
-    }
-
-    struct Vec3 gyro;
-    gyro.x = x/100;
-    gyro.y = y/100;
-    gyro.z = z/100;
-
-    return gyro;
+struct Vec3 processAccelData(struct Vec3 accel){
+    struct Vec3 g_force;
+  g_force.x = accel.x / 16384.0;
+  g_force.y = accel.y / 16384.0;
+  g_force.z = accel.z / 16384.0;
+  return g_force;
 }
 
-
-void setup()
-{
-    Wire.begin(); //initiate wire library and I2C
-    Wire.beginTransmission(MPU); //begin transmission to I2C slave device
-    Wire.write(0x6B); // PWR_MGMT_1 register
-    Wire.write(0); // set to zero (wakes up the MPU-6050)  
-    Wire.endTransmission(true); //ends transmission to I2C slave device
-    Serial.begin(9600); //serial communication at 9600 bauds
+void updateOrientation(struct Orientation ort) {
+    current_ort.roll = ort.roll;
+    current_ort.pitch = ort.pitch;
 }
 
-void loop()
-{
-
-    //activateBMP6500(0x3B, false, 14, true);
-
-//   struct Vec3 accel = readAccel();
-//   AcX = accel.x;
-//   AcY = accel.y;
-//   AcZ = accel.z;
-// 
-//   //Celcius
-//   Tmp = readTemp(); // 0x41 (TEMP_OUT_H) 0x42 (TEMP_OUT_L) 
-// 
-    struct Vec3 gyro = readGyro();
-    GyX = gyro.x; // 0x43 (GYRO_XOUT_H) 0x44 (GYRO_XOUT_L)
-    GyY = gyro.y; // 0x45 (GYRO_YOUT_H) 0x46 (GYRO_YOUT_L)
-    GyZ = gyro.z; // 0x47 (GYRO_ZOUT_H) 0x48 (GYRO_ZOUT_L) 
-
-
-    //get pitch/roll
-    struct Orientation orient = getAngle(GyX,GyY,GyZ);
-  
-    //printing values to serial port
-//   Serial.print("Angle: ");
-   Serial.print("Pitch = "); Serial.print(orient.pitch);
-   Serial.print(" Roll = "); Serial.println(orient.roll);
-  
-//   Serial.print("Accelerometer: ");
-//   Serial.print("X = "); Serial.print(AcX);
-//   Serial.print(" Y = "); Serial.print(AcY);
-//   Serial.print(" Z = "); Serial.println(AcZ); 
-//
-//   Serial.print("Temperature in celsius = "); Serial.print(t);  
-// 
-//   Serial.print("Gyroscope: ");
-// Serial.print("X = "); Serial.print(GyX);
-// Serial.print(" Y = "); Serial.print(GyY);
-// Serial.print(" Z = "); Serial.println(GyZ);
-  
-    delay(100);
+void errorCorrectOrt(struct Orientation ort) {
 }
 
-//function to convert accelerometer values into pitch and roll
-struct Orientation getAngle(int Ax,int Ay,int Az) 
-{
-    double x = Ax;
-    double y = Ay;
-    double z = Az;
+void printCurrentOrt() {
+     Serial.println("");
+     Serial.print("Roll: ");
+     Serial.print(current_ort.roll);
+     Serial.print(" Pitch: ");
+     Serial.print(current_ort.pitch);
+}
 
-    pitch = atan(x/sqrt((y*y) + (z*z))); //pitch calculation
-    roll = atan(y/sqrt((x*x) + (z*z))); //roll calculation
-
-    struct Orientation orient;
-    //converting radians into degrees
-    orient.pitch = pitch * (180.0/3.14);
-    orient.roll = roll * (180.0/3.14) ;
-
-    return orient;
+void printOrientation(struct Orientation ort) {
+     Serial.println(""); //Had to print line for output to be registered on serial monitor
+     Serial.print("Roll: ");
+     Serial.print(ort.roll);
+     Serial.print(" Pitch: ");
+     Serial.print(ort.pitch);
 }
