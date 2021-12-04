@@ -15,17 +15,20 @@ struct Orientation {
 };
 
 
-struct Orientation current_ort;
+struct Orientation current_ort = (struct Orientation){0};
+struct Orientation ort_error = (struct Orientation){0};
+int first = 1;
 
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
   setupMPU();
+  ort_error = averageOrientation(1000, 0);
 }
 
 void loop() {
-  struct Orientation ort = requestOrientation();
+  struct Orientation ort = averageOrientation(10, 1);
   updateOrientation(ort);
   printCurrentOrt();
   delay(100);
@@ -56,6 +59,32 @@ struct Orientation requestOrientation() {
     return ort;
 }
 
+struct Orientation averageOrientation(int cycles, int error) {
+    struct Orientation a_ort = (struct Orientation){0};
+    struct Orientation c_ort = (struct Orientation){0};
+
+    double e_roll = 0;
+    double e_pitch = 0;
+    if(error == 1) {
+        e_roll = ort_error.roll;
+        e_pitch = ort_error.pitch;
+    }
+
+    int i = 0;
+    while(i < cycles) {
+        c_ort = requestOrientation();
+
+        a_ort.roll += (c_ort.roll - e_roll);
+        a_ort.pitch += (c_ort.pitch - e_pitch);
+
+        i += 1;
+    }
+    a_ort.roll = a_ort.roll/i;
+    a_ort.pitch = a_ort.pitch/i;
+
+    return a_ort;
+}
+
 struct Vec3 recordAccelRegisters() {
     struct Vec3 accel;
 
@@ -73,9 +102,10 @@ struct Vec3 recordAccelRegisters() {
 
 struct Vec3 processAccelData(struct Vec3 accel){
     struct Vec3 g_force;
-  g_force.x = accel.x / 16384.0;
-  g_force.y = accel.y / 16384.0;
-  g_force.z = accel.z / 16384.0;
+
+  g_force.x = (accel.x) / 16384.0;
+  g_force.y = (accel.y) / 16384.0;
+  g_force.z = (accel.z) / 16384.0;
   return g_force;
 }
 
@@ -84,8 +114,6 @@ void updateOrientation(struct Orientation ort) {
     current_ort.pitch = ort.pitch;
 }
 
-void errorCorrectOrt(struct Orientation ort) {
-}
 
 void printCurrentOrt() {
      Serial.println("");
