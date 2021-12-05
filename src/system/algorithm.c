@@ -1,7 +1,7 @@
 //time = millis();
 //#include "./job.c"
 #include "./scheduler.c"
-#include "./arduino/interupt/interupt.h"
+#include "../arduino/interupt/interupt.h"
 
 void (*algorithm_full)(void); //The schedulers algorithm
 void (*algorithm_next)(void); //The schedulers algorithm

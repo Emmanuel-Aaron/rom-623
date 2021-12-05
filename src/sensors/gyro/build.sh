@@ -1,5 +1,5 @@
-board="nano"
-device_path="/dev/ttyUSB0"
+board="uno"
+device_path="/dev/ttyACM0"
 board_type="arduino:avr:$board"
 
 arduino-cli compile -b $board_type -p $device_path

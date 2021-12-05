@@ -1,4 +1,9 @@
-#include "/root/Development/rom-623/src/algorithm.c"
+#include "/root/Development/rom-623/src/system/algorithm.c"
+
+#include "/root/Development/rom-623/src/tasks/altitude.c"
+#include "/root/Development/rom-623/src/tasks/orientation.c"
+
+
 void printer1() {
     digitalWrite(11, HIGH);
     delay(1000);
@@ -31,8 +36,8 @@ Serial.begin(9600);
     const struct Job job2 = createJob(ex_con2, t_info2, 6);
 
     //Setting the instructions for the jobs
-    addInstruction(1, printer1);
-    addInstruction(2, printer2);
+    addInstruction(1, altitude);
+    addInstruction(2, orient);
 
 
     //Zeroing all lists

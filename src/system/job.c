@@ -1,4 +1,4 @@
-#include "../header/job_structure.h"
+#include "../../header/job_structure.h"
 //#include "../header/test_resources.h"
 
 //Will return a uniqe deterministic ID for each job
