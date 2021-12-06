@@ -4,6 +4,9 @@
 int hard;
 void setup() {
 Serial.begin(9600);
+aileronL.attach(2);
+aileronR.attach(4);
+elevator.attach(6);
     //JOB1
     //Exec, prio, period, periodic, deadl, dead_t, realease
     const struct TimeInfo t_info1 = createTInfo(1, 10, 4, 3, 1, 1, 0);
