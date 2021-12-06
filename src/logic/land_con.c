@@ -1,8 +1,6 @@
 #include "/root/Development/rom-623/src/system/algorithm.c"
 
-#include "/root/Development/rom-623/src/tasks/altitude.c"
-#include "/root/Development/rom-623/src/tasks/orientation.c"
-#include "/root/Development/rom-623/src/tasks/clearnace.c"
+#include "/root/Development/rom-623/src/logic/aton_landing.c"
 
 void spam() {
     Serial.println(" Im the new job");

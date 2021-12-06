@@ -1,4 +1,4 @@
-#include "/root/Development/rom-623/src/logic/land_con.c"
+#include "/root/Development/rom-623/src/logic/aton_landing.c"
 
 
 int hard;
@@ -23,18 +23,18 @@ Serial.begin(9600);
     const struct ExecConstraints ex_con3 = createExCons(NULL, NULL, 0, 3);
     const struct Job job3 = createJob(ex_con3, t_info3, 8);
 
-    //JOB4
-    const struct TimeInfo t_info4 = createTInfo(1, 10, 1, 1, 5, 0, 0);
-    const struct ExecConstraints ex_con4 = createExCons(NULL, NULL, 0, 4);
-    const struct Job job4 = createJob(ex_con4, t_info4, 9);
+    //JOB4 preflight
+        const struct TimeInfo t_info4 = createTInfo(1, 10, 1, 1, 10, 0, 0);
+        const struct ExecConstraints ex_con4 = createExCons(NULL, NULL, 0, 4);
+        const struct Job job4 = createJob(ex_con4, t_info4, 11);
 
     //Setting the instructions for the jobs
     //func_type, func_ptr
     addInstruction(1, altitude);
     addInstruction(2, orient);
     addInstruction(3, groundClearance);
-    addInstruction(4, checkAton);
-    addInstruction(5, spam);
+    addInstruction(4, preTransFlight);
+    addInstruction(5, postTransFlight);
 
 
     //Zeroing all lists

@@ -8,8 +8,8 @@
 
 #define LOW 0
 #define HIGH 1
-#define echoPin 2 // attach pin D2 Arduino to pin Echo of HC-SR04
-#define trigPin 3 //attach pin D3 Arduino to pin Trig of HC-SR04
+#define echoPin 7 // attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigPin 8 //attach pin D3 Arduino to pin Trig of HC-SR04
 
 // defines variables
 double clearance;
@@ -36,5 +36,5 @@ double requestAverageTimeDelay(int cycles) {
 
 
 double requestClrearence(int cycles) {
-    return requestAverageTimeDelay(cycles)*(0.034/2) - base_clearance;
+    return (requestAverageTimeDelay(cycles)*(0.034/2) - base_clearance)/100;
 }
