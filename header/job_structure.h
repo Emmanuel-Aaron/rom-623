@@ -42,7 +42,7 @@ struct Mash {
 };
 
 //Preforms required conversions and calculations to create time info
-const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, size_t deadl, uint8_t deadl_t, size_t release);
+const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, uint8_t periodic, size_t deadl, uint8_t deadl_t, size_t release);
 
 //Preforms required conversions and calculations to create exec 
 //constraints

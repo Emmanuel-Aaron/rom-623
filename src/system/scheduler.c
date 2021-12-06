@@ -46,10 +46,10 @@ void zero() {
     zeroQue();
 }
 
-int findTask(uint8_t id) {
+int findTaskByValue(uint8_t id, struct Job* jobs, int list_size) {
     int i = 0;
-    while (i < MAX_TASKS) {
-        if(tasks[i].ID == id) {
+    while (i < list_size) {
+        if(jobs[i].ID == id) {
             return i; //Task index if found
         }
 
@@ -59,11 +59,24 @@ int findTask(uint8_t id) {
     return -1; //If no task found -1
 }
 
-int addTask(const struct Job job) {
+int findTaskByReference(uint8_t id, struct Job** jobs, int list_size) {
+    int i = 0;
+    while (i < list_size) {
+        if(jobs[i]->ID == id) {
+            return i; //Task index if found
+        }
+
+        i += 1;
+    }
+
+    return -1; //If no task found -1
+}
+
+int addTask(const struct Job job, struct Job* job_list) {
     int i = 0;
     while (i < MAX_TASKS) {
-        if(tasks[i].ID == 0) {
-            tasks[i] = job;
+        if(job_list[i].ID == 0) {
+            job_list[i] = job;
             return i;
         }
         i += 1;
@@ -72,10 +85,29 @@ int addTask(const struct Job job) {
 
 }
 
+void acceptQue() {
+    int i = 0;
+    while(i < MAX_QUE) {
+        if(que[i].ID == 0) {}
+        else {
+            addTask(que[i], tasks);
+        }
+        i += 1;
+    }
+    zeroQue();
+}
+
+
 void removeTask(uint8_t id) {
-    int index = findTask(id);
+    int index;
+    index = findTaskByReference(id, schedule, MAX_SIZE);
+    schedule[index] = 0;
+
+    index = findTaskByValue(id, que, MAX_QUE);
+    tasks[index] = (struct Job){0};
+
+    index = findTaskByValue(id, tasks, MAX_TASKS);
     tasks[index] = (const struct Job){0}; //write entire task to 0
-    //restructureTasks();
 }
 
 void printTaskList() {

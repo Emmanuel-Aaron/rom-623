@@ -46,6 +46,7 @@ void copyList(struct Job** src, struct Job** dest, int size) {
 }
 
 void fullSchedule() {
+    zeroJobs();
     algorithm_full();
 }
 
@@ -61,32 +62,33 @@ void setNextHardD() {
     }
 }
 
+void dispatcher() {
+    if(schedule[(job_index - 1)%MAX_SIZE]->ID == 0) {}
+    else {
+        if(schedule[(job_index - 1)%MAX_SIZE]->t_info.periodic == 0) {
+            removeTask(schedule[(job_index - 1)%MAX_SIZE]->ID);
+        }
+    }
+}
 void scheduleNext(int hard) {
     if(hard != 0) {
         //Set the next interupt
         //setNextHardD();
     }
+    dispatcher();
+    acceptQue();//Check que of jobs add by addJob(job)
+    //Create que which the scheduler adds jobs. Replace the xisting 
+    //method
+    //add Task also ads the task to the que. The algorithems still 
+    //sort from the list of tasks still
+    //Tasks in the que are removed when complete
+    //If a job is not periodic remove it after
     algorithm_next();
 }
 
 int findAvailableTime(struct Job* job_ptr) {
 }
 
-int addQue() {
-    int i = 0;
-    while (i < MAX_QUE) {
-        if (task_index == MAX_QUE) {
-            return -1;
-        }
-        else if (que[i].ID == 0) {}
-        else {
-            addTask(que[i]);
-            que[i] = (struct Job){0};
-        }
-        i += 1;
-    }
-    return 1;
-}
 
 //Must account for release time!!!!!!!!!
 //Emanuels algorithem
@@ -164,7 +166,6 @@ void fcfcFull() {
 }
 
 void fcfcNext() {
-    addQue();
     fcfcFull();
 }
 

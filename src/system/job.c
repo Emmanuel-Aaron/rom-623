@@ -7,7 +7,7 @@ uint8_t genID(struct Job job) {
     return job_id;
 }
 
-const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, size_t deadl, uint8_t deadl_t, size_t release) {
+const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, uint8_t periodic, size_t deadl, uint8_t deadl_t, size_t release) {
     struct TimeInfo t_info;
 
         t_info.exec_time = exec_t;
@@ -16,6 +16,7 @@ const struct TimeInfo createTInfo(size_t exec_t, uint8_t prio, size_t period, si
         t_info.deadline = deadl;
         t_info.deadline_type = deadl_t;
         t_info.release = release;
+        t_info.periodic = periodic;
 
     return t_info;
 }

@@ -11,6 +11,7 @@ void altitude() {
         first_run_alti = 1;
     }
     current_altitude = requestAltitude(15);
-    Serial.println(current_altitude);
+    Serial.print("Altitude: ");
+    Serial.print(current_altitude);
 }
 
