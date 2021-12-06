@@ -2,21 +2,8 @@
 
 #include "/root/Development/rom-623/src/tasks/altitude.c"
 #include "/root/Development/rom-623/src/tasks/orientation.c"
+#include "/root/Development/rom-623/src/tasks/clearnace.c"
 
-
-void printer1() {
-    digitalWrite(11, HIGH);
-    delay(1000);
-    digitalWrite(11, LOW);
-    delay(1000);
-}
-
-void printer2() {
-    digitalWrite(10, HIGH);
-    delay(2000);
-    digitalWrite(10, LOW);
-    delay(1000);
-}
 
 int hard;
 void setup() {
@@ -35,9 +22,15 @@ Serial.begin(9600);
     const struct ExecConstraints ex_con2 = createExCons(NULL, NULL, 0, 2);
     const struct Job job2 = createJob(ex_con2, t_info2, 6);
 
+    //JOB3
+    const struct TimeInfo t_info3 = createTInfo(1, 10, 2, 6, 0, 0);
+    const struct ExecConstraints ex_con3 = createExCons(NULL, NULL, 0, 3);
+    const struct Job job3 = createJob(ex_con3, t_info3, 7);
+
     //Setting the instructions for the jobs
     addInstruction(1, altitude);
     addInstruction(2, orient);
+    addInstruction(3, groundClearance);
 
 
     //Zeroing all lists
@@ -45,6 +38,7 @@ Serial.begin(9600);
     //Adding the tasks
     addTask(job1);
     addTask(job2);
+    addTask(job3);
 
     //chacking if the schudle is feasible
     //printf("Is feasible: %d\n", schedulerFeasibilty());
