@@ -6,27 +6,34 @@
 #include "/root/Development/rom-623/src/tasks/altitude.c"
 #include "/root/Development/rom-623/src/tasks/orientation.c"
 #include "/root/Development/rom-623/src/tasks/clearnace.c"
+#include "/root/Development/rom-623/src/sensors/brushlessMotor/motor.c"
 
-#include "/root/Development/rom-623/src/sensors/servo/servo.c"
 
 double trans_altitude = 1;
 
 double pre_trans_roll = 0;
-double pre_trans_pitch = 45;
+double pre_trans_pitch = 12;
 
 double post_trans_roll = 0;
-double post_trans_pitch = 20;
+double post_trans_pitch = 8;
 
 double altitude_error = 2;
 double angle_error;
 double ajust_factor;
 
+
 void holdRoll(double roll) {
     if(current_ort.roll < (roll - angle_error)) {
-        adjustRoll(-1*ajust_factor);
+        aileronL.write(130);
+        delay(100);
+        aileronR.write(60);
+        delay(100);
     } 
     else if(current_ort.roll > (roll + angle_error)) {
-        adjustRoll(ajust_factor);
+        aileronL.write(55);
+        delay(100);
+        aileronR.write(130);
+        delay(100);
     }
     else {
     }
@@ -34,10 +41,12 @@ void holdRoll(double roll) {
 
 void holdPitch(double pitch) {
     if(current_ort.pitch < (pitch - angle_error)) {
-        adjustPitch(-1*ajust_factor);
+        elevator.write(130);
+        delay(100);
     } 
     else if(current_ort.pitch > (pitch + angle_error)) {
-        adjustPitch(ajust_factor);
+        elevator.write(60);
+        delay(100);
     }
     else {
     }
@@ -48,8 +57,15 @@ void holdOrientation(double pitch, double roll) {
     holdRoll(roll);
 }
 
+int room = 0;
 //Task 12
 void postTransFlight() {
+    if(room == 0) {
+        Serial.println("Motor on");
+        motorStart();
+        motorUp();
+        room = 1;
+    }
     Serial.println("Post trans flight");
     if(clearance > trans_altitude) {
         const struct TimeInfo t_info7 = createTInfo(1, 10, 1, 1, 10, 0, 0);
@@ -59,12 +75,19 @@ void postTransFlight() {
         removeTask(12);
         addTask(job7, que);
     } else {
+
         holdOrientation(post_trans_pitch, post_trans_roll);
     }
 }
 
+int roon = 0;
 //task 11
 void preTransFlight() {
+    if(roon == 0) {
+        Serial.println("Motor Low");
+        motorDown();
+        roon = 1;
+    }
     Serial.println("Pre trans flight");
     if((current_altitude) < trans_altitude) {
         const struct TimeInfo t_info6 = createTInfo(1, 10, 1, 1, 11, 0, 0);

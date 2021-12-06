@@ -1,13 +1,13 @@
-#include "Servo.h"
-#include "Servo.cpp"
+#include "/root/Development/rom-623/src/sensors/servo/Servo.cpp"
 
-double actual_Laileron_pos;
-double actual_Raileron_pos;
-double actual_elevator_pos;
+double actual_Laileron_pos = 0;
+double actual_Raileron_pos = 0;
+double actual_elevator_pos = 0;
 
 Servo aileronL;
 Servo aileronR;
 Servo elevator;
+
 
 void wingletZero(){
 
