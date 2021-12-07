@@ -27,6 +27,14 @@ Hardware Breackdown
             Sensors
             Low level protocols
 
+    Ideal Design Differences
+        Under 250g
+        Stronger material
+        Mass producable
+        Reliable sensors and components
+        Reaslistic caluclations
+        Simulate before design
+
 
 Software Breackdown
     software architecture
@@ -73,6 +81,13 @@ Software Breackdown
             Manage oriantation
             Manage Altitude
             Autonomous Landing
+
+    Ideal Design Differences
+        Linked list style jobs to easily insert a new job without restructuring
+        More effective and well constructed scheduling algorithems
+        Network protocol to allow remote operation
+        Implementation of all Task related data (resources, ect)
+        A more robust scheduler design
 
 
 Potential Applications
