@@ -1,26 +1,16 @@
-#include"/home/inventor/rom-623/src/sensors/brushlessMotor/Servo.h"
-
-Servo esc;
-
-void pwmTest(){
-
-	for(int i = 0; i < 2000; i+=10){
-		
-		esc.writeMicroseconds(i);
-		delay(50);
-	}
-}
-
-void arm(){
-
-}
+//
+//
+//
+//Lowest throttle 1300
+//Max Throttle 2300
+#include"/root/Development/rom-623/src/sensors/brushlessMotor/brushed.h"
 
 void setup(){
 
-	esc.attach(9);
-	pwmTest();
+    esc.attach(12);
+    arm();
 }
 
 void loop(){
-
+throttle(1200);
 }
