@@ -3,6 +3,8 @@
 
 int hard;
 void setup() {
+esc.attach(12);
+arm();
 Serial.begin(9600);
 aileronL.attach(2);
 aileronR.attach(4);
@@ -36,8 +38,8 @@ elevator.attach(6);
     addInstruction(1, altitude);
     addInstruction(2, orient);
     addInstruction(3, groundClearance);
-    addInstruction(4, preTransFlight);
-    addInstruction(5, postTransFlight);
+    addInstruction(5, preTransFlight);
+    addInstruction(4, postTransFlight);
 
 
     //Zeroing all lists
