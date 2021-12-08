@@ -2,9 +2,10 @@
 #include <stddef.h>
 //Information regarding time
 struct TimeInfo {
+    uint8_t priority; //0-10
+
     size_t release;
     size_t exec_time; //Milliseconds
-    uint8_t priority; //0-10
 
     uint8_t periodic; //0||!0
     size_t period; //Milliseconds
