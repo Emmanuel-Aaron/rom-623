@@ -14,28 +14,28 @@
 double trans_altitude = 1;
 
 double pre_trans_roll = 0;
-double pre_trans_pitch = 12;
+double pre_trans_pitch = 30;
 
 double post_trans_roll = 0;
-double post_trans_pitch = 8;
+double post_trans_pitch = 5;
 
 double altitude_error = 2;
-double angle_error;
-double ajust_factor;
+double angle_error = 0;
+double ajust_factor = 0;
 
 
 void holdRoll(double roll) {
     if(current_ort.roll < (roll - angle_error)) {
         aileronL.write(130);
-        delay(100);
-        aileronR.write(60);
-        delay(100);
+        delay(10);
+        aileronR.write(130);
+        delay(10);
     } 
     else if(current_ort.roll > (roll + angle_error)) {
         aileronL.write(55);
-        delay(100);
-        aileronR.write(130);
-        delay(100);
+        delay(10);
+        aileronR.write(60);
+        delay(10);
     }
     else {
     }
@@ -44,11 +44,11 @@ void holdRoll(double roll) {
 void holdPitch(double pitch) {
     if(current_ort.pitch < (pitch - angle_error)) {
         elevator.write(130);
-        delay(100);
+        delay(10);
     } 
     else if(current_ort.pitch > (pitch + angle_error)) {
         elevator.write(60);
-        delay(100);
+        delay(10);
     }
     else {
     }
@@ -73,6 +73,8 @@ int po_t_f = 0;
 void postTransFlight() {
     if(isFirstRun(&po_t_f)) {
         range(1300, 2300, 10);
+        holdOrientation(40, 0);
+        delay(100);
     }
 
     //FlightTransition

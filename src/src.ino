@@ -1,14 +1,19 @@
-#include "/root/Development/rom-623/src/logic/aton_landing.c"
+#include "/root/Development/rom-623/src/tasks/logic/aton_landing.c"
 
 
 int hard;
 void setup() {
-esc.attach(12);
-arm();
-Serial.begin(9600);
+
+//setuping up motors
 aileronL.attach(2);
 aileronR.attach(4);
 elevator.attach(6);
+esc.attach(12);
+arm();
+
+//Possible serial output for testing
+Serial.begin(9600);
+
     //JOB1
     //Exec, prio, period, periodic, deadl, dead_t, realease
     const struct TimeInfo t_info1 = createTInfo(1, 10, 4, 3, 1, 1, 0);
@@ -38,8 +43,8 @@ elevator.attach(6);
     addInstruction(1, altitude);
     addInstruction(2, orient);
     addInstruction(3, groundClearance);
-    addInstruction(5, preTransFlight);
     addInstruction(4, postTransFlight);
+    addInstruction(5, preTransFlight);
 
 
     //Zeroing all lists
